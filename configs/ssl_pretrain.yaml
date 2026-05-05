@@ -1,0 +1,91 @@
+# ExamHandOCR - SSL Pre-training Configuration
+
+# Data Configuration for SSL
+data:
+  data_root: "./data/ExamHandOCR/train-unsup"
+  image_list: null  # If null, scan all images
+  
+  # Image preprocessing
+  image_size: [384, 128]
+  patch_size: 16
+  
+  # Data loading
+  batch_size: 256  # Larger batch size for SSL
+  num_workers: 8
+  pin_memory: true
+  
+  # Data augmentation
+  augmentation:
+    enabled: true
+    random_crop: true
+    color_jitter: 0.4
+    grayscale: true
+
+# SSL Model Configuration
+model:
+  type: "mae"
+  
+  # MAE Architecture
+  mae:
+    img_size: [384, 128]
+    patch_size: 16
+    mask_ratio: 0.75
+    
+    # Encoder (ViT-Base)
+    encoder_embed_dim: 768
+    encoder_depth: 12
+    encoder_num_heads: 12
+    
+    # Decoder
+    decoder_embed_dim: 512
+    decoder_depth: 8
+    decoder_num_heads: 16
+    
+    mlp_ratio: 4.0
+    dropout: 0.1
+
+# SSL Training Configuration
+training:
+  epochs: 100
+  learning_rate: 1.5e-4
+  weight_decay: 0.05
+  warmup_epochs: 40
+  
+  # Optimizer settings
+  optimizer: "adamw"
+  betas: [0.9, 0.95]
+  
+  # Learning rate schedule
+  scheduler: "cosine_with_warmup"
+  min_lr: 1.0e-6
+  
+  # Training settings
+  grad_clip: 1.0
+  save_interval: 10
+  log_interval: 100
+
+# Evaluation during SSL
+evaluation:
+  enabled: true
+  eval_interval: 10
+  
+  # Reconstruction visualization
+  vis_reconstruction: true
+  num_vis_samples: 8
+
+# Output Configuration
+output:
+  output_dir: "./outputs_ssl"
+  log_dir: "./logs_ssl"
+  tensorboard_dir: "./tensorboard_ssl"
+  checkpoint_dir: "./checkpoints_ssl"
+
+# Hardware Configuration
+hardware:
+  device: "cuda"
+  gpu_ids: [0, 1, 2, 3]  # Multi-GPU for SSL
+  mixed_precision: true
+  distributed: true
+
+# Reproducibility
+seed: 42

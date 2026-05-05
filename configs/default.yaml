@@ -1,0 +1,119 @@
+# ExamHandOCR - Default Configuration
+
+# Data Configuration
+data:
+  data_root: "./data/ExamHandOCR"
+  annotation_file: "./data/annotations.json"
+  image_size: [384, 128]  # Width, Height
+  batch_size: 32
+  num_workers: 4
+  pin_memory: true
+
+# Model Configuration
+model:
+  type: "trocr"  # Options: crnn, abinet, trocr, vit_ocr
+  num_classes: 5000
+  
+  # Pre-training
+  pretrained: true
+  pretrained_path: null
+  
+  # SSL Pre-training
+  ssl_pretrained: false
+  ssl_pretrained_path: null
+  
+  # Model-specific settings
+  crnn:
+    hidden_size: 512
+    use_ctc: true
+  
+  abinet:
+    d_model: 512
+    num_iter: 3
+  
+  trocr:
+    model_name: "microsoft/trocr-base-handwritten"
+    max_length: 512
+  
+  vit_ocr:
+    patch_size: 16
+    embed_dim: 768
+    encoder_depth: 12
+    decoder_depth: 6
+    num_heads: 12
+
+# Training Configuration
+training:
+  epochs: 50
+  learning_rate: 1.0e-4
+  weight_decay: 0.01
+  warmup_epochs: 5
+  grad_clip: 1.0
+  
+  # Optimizer
+  optimizer: "adamw"
+  scheduler: "cosine"
+  
+  # Checkpointing
+  save_interval: 10
+  eval_interval: 1
+  keep_last_n: 3
+  
+  # Logging
+  log_interval: 100
+  tensorboard: true
+  wandb: false
+
+# SSL Pre-training Configuration
+ssl:
+  enabled: false
+  epochs: 100
+  learning_rate: 1.5e-4
+  warmup_epochs: 40
+  weight_decay: 0.05
+  
+  # MAE settings
+  mask_ratio: 0.75
+  patch_size: 16
+  
+  # Encoder
+  encoder_embed_dim: 768
+  encoder_depth: 12
+  
+  # Decoder
+  decoder_embed_dim: 512
+  decoder_depth: 8
+
+# Evaluation Configuration
+evaluation:
+  calculate_oqs: true
+  calculate_ri: true
+  evaluate_tracks: true
+  
+  # ESA-CER settings
+  esa_alpha: 3.0
+  
+  # Cross-session evaluation
+  source_domain: "Current"
+  target_domain: "Current_jst"
+
+# Output Configuration
+output:
+  output_dir: "./outputs"
+  log_dir: "./logs"
+  tensorboard_dir: "./tensorboard"
+  checkpoint_dir: "./checkpoints"
+  
+  # Visualization
+  save_predictions: true
+  num_vis_samples: 16
+
+# Hardware Configuration
+hardware:
+  device: "cuda"  # cuda or cpu
+  gpu_ids: [0]  # For multi-GPU training
+  mixed_precision: true
+  
+# Reproducibility
+seed: 42
+deterministic: false
